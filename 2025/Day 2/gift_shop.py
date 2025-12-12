@@ -1,35 +1,35 @@
-import textwrap
 
 filename : str = "input.txt"
 false_id_count : int = 0
 
-# get input string
-with open (filename) as input:
-    # split into id ranges
-    ranges = input.read().split(",")
+def all_chunks_equal(s: str, chunk_size: int) -> bool:
+    """Return True if s can be split into equal-size chunks and all chunks are identical."""
+    # Number of chunks
+    n = len(s) // chunk_size
+    chunk = s[:chunk_size]
+    # Compare each chunk directly
+    for i in range(1, n):
+        if s[i*chunk_size:(i+1)*chunk_size] != chunk:
+            return False
+    return True
+
+with open(filename) as input_file:
+    ranges = input_file.read().split(",")
 
     for ids in ranges:
-        # get start and end of the range
-        ids = ids.split("-")
-        start = int(ids[0])
-        end = int(ids[1])
+        start, end = map(int, ids.split("-"))
 
-        # loop through ids
-        for id in range(start, end):
-            str_id = str(id)
-            split_size = len(str_id) // 2  # Use integer division for the midpoint index
+        for id_value in range(start, end):
+            s = str(id_value)
+            L = len(s)
 
-            while(split_size >= 1):
-                result = textwrap.wrap(str_id, split_size)
-                # Convert the list to a set to remove duplicates
-                unique_parts = set(result)
-                    
-                # If all parts are the same, the set will only have 1 element
-                if(len(unique_parts) == 1):
-                    false_id_count += id
-                    break
-                else:
-                    # increase number of splits
-                    split_size = split_size - 1
+            # Try all even chunk sizes (must divide evenly)
+            for chunk_size in range(L // 2, 0, -1):
+                if L % chunk_size != 0:
+                    continue  # split must be even
+
+                if all_chunks_equal(s, chunk_size):
+                    false_id_count += id_value
+                    break  # Stop after the first valid split
 
 print(false_id_count)
