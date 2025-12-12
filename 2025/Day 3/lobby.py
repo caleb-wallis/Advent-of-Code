@@ -1,22 +1,29 @@
 
-input : str = "23423423478"
-
-pointer : int = 2
-
-tens : int = int(input[0])
-ones : int = int(input[1])
-
 total : int = 0
+filename : str = "input.txt"
 
-for i, ch in enumerate(input[2:], start=2):
-    num = int(ch)
+# get max voltage (2 batteries)
+def find_max_joltage(bank: str) -> int:
+    tens : int = int(bank[0])
+    ones : int = int(bank[1])
 
-    if num > tens and i != len(input) - 1:   # not last char
-        tens = num
-    elif num > ones:
-        ones = num
+    for i, ch in enumerate(bank[2:], start=2):
+        num = int(ch)
 
-total = total + tens * 10 + ones
+        if num > tens and i != len(bank) - 1:   # not last char
+            tens = num
+            ones = int(bank[i + 1])
+        elif num > ones:
+            ones = num
 
-#print(tens, ones)
-print(total)
+    return tens * 10 + ones
+
+
+with open(filename) as f:
+     for battery in f:
+         battery = battery.strip()
+
+         # part 1
+         total += find_max_joltage(battery)
+
+print("Total:", total)
